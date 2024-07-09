@@ -41,8 +41,14 @@ impl Ball {
     }
 
     // pub fn delete_inactive_lasers(&mut self) {
-    //     for laser in self.laser.iter_mut() {
-    //         laser.active = false;
+    // let mut i = 0;
+    // while i < self.spacehip.laser.len() {
+    //     if !self.spacehip.laser[i].active {
+    //         self.spacehip.laser.remove(i);
+    //     } else {
+    //         i += 1;
     //     }
+    // }
+    //
     // }
 }

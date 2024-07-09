@@ -36,5 +36,12 @@ impl Game {
         for laser in self.spacehip.laser.iter_mut() {
             laser.laser_update(rl);
         }
+        self.delete_inactive_laser();
+
+        println!("{:?}", self.spacehip.laser.len());
+    }
+
+    pub fn delete_inactive_laser(&mut self) {
+        self.spacehip.laser.retain(|laser| laser.active);
     }
 }
