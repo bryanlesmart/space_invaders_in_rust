@@ -12,13 +12,14 @@ fn main() {
         .title("ball")
         .build();
     let gray = Color::new(29, 29, 27, 255);
-    let spacehip = Spacehip::new(&mut rl, "res/spacehip.png", &t);
+    let mut spacehip = Spacehip::new(&mut rl, "res/spaceship.png", &t);
 
     rl.set_target_fps(60);
 
     while !rl.window_should_close() {
-        let mut d = rl.begin_drawing(&t);
+        spacehip.spaceship_update(&rl);
 
+        let mut d = rl.begin_drawing(&t);
         d.clear_background(gray);
 
         spacehip.spaceship_draw(&mut d);
