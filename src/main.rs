@@ -1,6 +1,7 @@
-use ball::Ball;
+use raylib::{color::Color, drawing::RaylibDraw};
+use spacehip::Spacehip;
 
-mod ball;
+mod spacehip;
 
 const SCREEN_WIDTH: f32 = 800.0;
 const SCREEN_HEIGTH: f32 = 600.0;
@@ -10,13 +11,16 @@ fn main() {
         .size(SCREEN_WIDTH as i32, SCREEN_HEIGTH as i32)
         .title("ball")
         .build();
-
-    let mut ball = Ball::new();
+    let gray = Color::new(29, 29, 27, 255);
+    let spacehip = Spacehip::new(&mut rl, "res/spacehip.png", &t);
 
     rl.set_target_fps(60);
 
     while !rl.window_should_close() {
-        ball.update(&rl);
-        ball.draw(&mut rl, &t);
+        let mut d = rl.begin_drawing(&t);
+
+        d.clear_background(gray);
+
+        spacehip.spaceship_draw(&mut d);
     }
 }
