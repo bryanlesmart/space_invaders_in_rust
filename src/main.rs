@@ -1,7 +1,7 @@
-use laser::Laser;
-use raylib::{color::Color, drawing::RaylibDraw, math::Vector2};
-use spacehip::Spacehip;
+use game::Game;
+use raylib::{color::Color, drawing::RaylibDraw};
 
+mod game;
 mod laser;
 mod spacehip;
 
@@ -14,17 +14,14 @@ fn main() {
         .title("ball")
         .build();
     let gray = Color::new(29, 29, 27, 255);
-    let mut spacehip = Spacehip::new(&mut rl, "res/spaceship.png", &t);
-    let mut laser = Laser::new(Vector2::new(100.0, 100.0), -6.0);
-
+    let mut game = Game::new(&mut rl, "res/spaceship.png", &t);
     rl.set_target_fps(60);
 
     while !rl.window_should_close() {
-        spacehip.spaceship_update(&rl);
-        laser.laser_update(&rl);
+        game.game_input(&rl);
+        game.game_update(&rl);
         let mut d = rl.begin_drawing(&t);
         d.clear_background(gray);
-        laser.laser_draw(&mut d);
-        spacehip.spaceship_draw(&mut d);
+        game.game_draw(&mut d);
     }
 }

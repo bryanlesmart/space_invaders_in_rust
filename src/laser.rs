@@ -17,7 +17,7 @@ impl Laser {
 
     pub fn laser_update(&mut self, rl: &RaylibHandle) {
         if self.active {
-            if self.position.y > rl.get_screen_height() as f32 {
+            if self.position.y > rl.get_screen_height() as f32 || self.position.y < 0.0 {
                 return self.active = false;
             }
             self.position.y += self.speed;
@@ -25,14 +25,9 @@ impl Laser {
     }
 
     pub fn laser_draw(&self, d: &mut RaylibDrawHandle) {
+        let color = Color::new(243, 216, 63, 255);
         if self.active {
-            d.draw_rectangle(
-                self.position.x as i32,
-                self.position.y as i32,
-                4,
-                5,
-                Color::GRAY,
-            );
+            d.draw_rectangle(self.position.x as i32, self.position.y as i32, 4, 5, color);
         }
     }
 }

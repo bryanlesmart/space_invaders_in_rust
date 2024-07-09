@@ -39,4 +39,10 @@ impl Ball {
 
         d.draw_circle(self.x as i32, self.y as i32, self.radius, Color::WHITE)
     }
+
+    // pub fn delete_inactive_lasers(&mut self) {
+    //     for laser in self.laser.iter_mut() {
+    //         laser.active = false;
+    //     }
+    // }
 }
