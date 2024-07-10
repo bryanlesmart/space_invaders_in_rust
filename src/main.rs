@@ -1,8 +1,10 @@
 use game::Game;
-use raylib::{color::Color, drawing::RaylibDraw};
+use raylib::prelude::*;
 
+mod block;
 mod game;
 mod laser;
+mod obstacle;
 mod spacehip;
 
 const SCREEN_WIDTH: f32 = 800.0;

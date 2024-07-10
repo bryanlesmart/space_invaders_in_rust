@@ -6,7 +6,6 @@ use crate::block::Block;
 pub struct Obstacle {
     pub position: Vector2,
     pub blocks: Vec<Block>,
-    pub grid: Vec<Vec<usize>>,
 }
 
 impl Obstacle {
@@ -62,11 +61,7 @@ impl Obstacle {
                 }
             }
         }
-        return Obstacle {
-            position,
-            blocks,
-            grid,
-        };
+        return Obstacle { position, blocks };
     }
 
     pub fn obstacle_draw(&mut self, d: &mut RaylibDrawHandle) {
