@@ -1,20 +1,20 @@
 use raylib::prelude::*;
 
-pub struct ALien {
+pub struct Alien {
     pub position: Vector2,
     pub alien_sprite: Texture2D,
 }
 
-impl ALien {
+impl Alien {
     pub fn new(types: usize, position: Vector2, rl: &mut RaylibHandle, t: &RaylibThread) -> Self {
         let alien_sprite = match types {
             1 => rl.load_texture(&t, "res/alien_1.png").unwrap(),
-            2 => rl.load_texture(&t, "res/alien_1.png").unwrap(),
-            3 => rl.load_texture(&t, "res/alien_1.png").unwrap(),
+            2 => rl.load_texture(&t, "res/alien_2.png").unwrap(),
+            3 => rl.load_texture(&t, "res/alien_3.png").unwrap(),
             _ => rl.load_texture(&t, "/res/alien_1.png").unwrap(),
         };
 
-        return ALien {
+        return Alien {
             position,
             alien_sprite,
         };

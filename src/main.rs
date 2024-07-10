@@ -1,4 +1,3 @@
-use alien::ALien;
 use game::Game;
 use raylib::prelude::*;
 
@@ -9,8 +8,8 @@ mod laser;
 mod obstacle;
 mod spacehip;
 
-const SCREEN_WIDTH: f32 = 800.0;
-const SCREEN_HEIGTH: f32 = 600.0;
+const SCREEN_WIDTH: f32 = 750.0;
+const SCREEN_HEIGTH: f32 = 700.0;
 
 fn main() {
     let (mut rl, t) = raylib::init()
@@ -19,7 +18,6 @@ fn main() {
         .build();
     let gray = Color::new(29, 29, 27, 255);
     let mut game = Game::new(&mut rl, "res/spaceship.png", &t);
-    let alien = ALien::new(1, Vector2::new(0.0, 0.0), &mut rl, &t);
     rl.set_target_fps(60);
 
     while !rl.window_should_close() {
@@ -28,6 +26,5 @@ fn main() {
         let mut d = rl.begin_drawing(&t);
         d.clear_background(gray);
         game.game_draw(&mut d);
-        alien.alien_draw(&mut d);
     }
 }

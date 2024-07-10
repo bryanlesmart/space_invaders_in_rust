@@ -1,12 +1,14 @@
 use raylib::consts::KeyboardKey::*;
 use raylib::prelude::*;
 
+use crate::alien::Alien;
 use crate::obstacle::Obstacle;
 use crate::spacehip::Spacehip;
 
 pub struct Game {
     pub spacehip: Spacehip,
     pub obstacle: Vec<Obstacle>,
+    pub aliens: Vec<Alien>,
 }
 
 impl Game {
@@ -14,9 +16,11 @@ impl Game {
         let mut game = Game {
             spacehip: Spacehip::new(rl, filename, t),
             obstacle: Vec::new(),
+            aliens: Vec::new(),
         };
         let obstacle = Obstacle::new(Vector2::zero());
         game.create_obstacles(obstacle, rl);
+        game.create_aliens(rl, t);
         return game;
     }
 
@@ -29,6 +33,10 @@ impl Game {
 
         for obstacle in self.obstacle.iter_mut() {
             obstacle.obstacle_draw(d);
+        }
+
+        for aliens in self.aliens.iter_mut() {
+            aliens.alien_draw(d);
         }
     }
 
@@ -63,6 +71,22 @@ impl Game {
             )))
         }
         return self.obstacle.clone();
+    }
+
+    pub fn create_aliens(&mut self, rl: &mut RaylibHandle, t: &RaylibThread) {
+        for row in 0..5 {
+            for col in 0..11 {
+                let alien_type = match row {
+                    0 => 3,
+                    1 | 2 => 2,
+                    _ => 1,
+                };
+                let x = 75.0 + col as f32 * 55.0;
+                let y = 110.0 + row as f32 * 55.0;
+                self.aliens
+                    .push(Alien::new(alien_type, Vector2::new(x, y), rl, t));
+            }
+        }
     }
 
     pub fn delete_inactive_laser(&mut self) {
