@@ -9,6 +9,7 @@ pub struct Game {
     pub spacehip: Spacehip,
     pub obstacle: Vec<Obstacle>,
     pub aliens: Vec<Alien>,
+    pub run: bool,
 }
 
 impl Game {
@@ -17,6 +18,7 @@ impl Game {
             spacehip: Spacehip::new(rl, filename, t),
             obstacle: Vec::new(),
             aliens: Vec::new(),
+            run: true,
         };
         let obstacle = Obstacle::new(Vector2::zero());
         game.create_obstacles(obstacle, rl);
@@ -25,28 +27,32 @@ impl Game {
     }
 
     pub fn game_draw(&mut self, d: &mut RaylibDrawHandle) {
-        self.spacehip.spaceship_draw(d);
+        if self.run {
+            self.spacehip.spaceship_draw(d);
 
-        for laser in self.spacehip.laser.iter() {
-            laser.laser_draw(d);
-        }
+            for laser in self.spacehip.laser.iter() {
+                laser.laser_draw(d);
+            }
 
-        for obstacle in self.obstacle.iter_mut() {
-            obstacle.obstacle_draw(d);
-        }
+            for obstacle in self.obstacle.iter_mut() {
+                obstacle.obstacle_draw(d);
+            }
 
-        for aliens in self.aliens.iter_mut() {
-            aliens.alien_draw(d);
+            for aliens in self.aliens.iter_mut() {
+                aliens.alien_draw(d);
+            }
         }
     }
 
     pub fn game_input(&mut self, rl: &RaylibHandle) {
-        if rl.is_key_down(KEY_LEFT) {
-            self.spacehip.move_left(rl);
-        } else if rl.is_key_down(KEY_RIGHT) {
-            self.spacehip.move_right(rl);
-        } else if rl.is_key_down(KEY_SPACE) {
-            self.spacehip.space_fire_laser(rl);
+        if self.run {
+            if rl.is_key_down(KEY_LEFT) {
+                self.spacehip.move_left(rl);
+            } else if rl.is_key_down(KEY_RIGHT) {
+                self.spacehip.move_right(rl);
+            } else if rl.is_key_down(KEY_SPACE) {
+                self.spacehip.space_fire_laser(rl);
+            }
         }
     }
 
