@@ -27,4 +27,8 @@ impl Alien {
             Color::WHITE,
         );
     }
+
+    pub fn alien_update(&mut self, direction: f32) {
+        self.position.x += direction;
+    }
 }

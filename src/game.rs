@@ -10,6 +10,7 @@ pub struct Game {
     pub obstacle: Vec<Obstacle>,
     pub aliens: Vec<Alien>,
     pub run: bool,
+    pub alien_direction: f32,
 }
 
 impl Game {
@@ -19,6 +20,7 @@ impl Game {
             obstacle: Vec::new(),
             aliens: Vec::new(),
             run: true,
+            alien_direction: 1.0,
         };
         let obstacle = Obstacle::new(Vector2::zero());
         game.create_obstacles(obstacle, rl);
@@ -61,6 +63,7 @@ impl Game {
             laser.laser_update(rl);
         }
         self.delete_inactive_laser();
+        self.move_alien(rl);
 
         // println!("{:?}", self.spacehip.laser.len());
     }
@@ -92,6 +95,35 @@ impl Game {
                 self.aliens
                     .push(Alien::new(alien_type, Vector2::new(x, y), rl, t));
             }
+        }
+    }
+
+    pub fn move_alien(&mut self, rl: &RaylibHandle) {
+        let screen_width = rl.get_screen_width() as f32;
+        let mut change_direction = None;
+
+        for alien in self.aliens.iter_mut() {
+            if alien.position.x + alien.alien_sprite.width() as f32 > screen_width {
+                change_direction = Some(-1.0);
+            }
+            if alien.position.x < 0.0 {
+                change_direction = Some(1.0);
+            }
+        }
+
+        if let Some(direction) = change_direction {
+            self.alien_direction = direction;
+            self.move_alien_down(4.0);
+        }
+
+        for alien in self.aliens.iter_mut() {
+            alien.alien_update(self.alien_direction);
+        }
+    }
+
+    pub fn move_alien_down(&mut self, distance: f32) {
+        for alien in self.aliens.iter_mut() {
+            alien.position.y += distance;
         }
     }
 

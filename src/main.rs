@@ -8,8 +8,8 @@ mod laser;
 mod obstacle;
 mod spacehip;
 
-const SCREEN_WIDTH: f32 = 800.0;
-const SCREEN_HEIGTH: f32 = 600.0;
+const SCREEN_WIDTH: f32 = 750.0;
+const SCREEN_HEIGTH: f32 = 700.0;
 
 fn main() {
     let (mut rl, t) = raylib::init()
