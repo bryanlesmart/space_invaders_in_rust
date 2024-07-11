@@ -186,6 +186,7 @@ impl Game {
     }
 
     pub fn check_collison(&mut self) {
+        // Check collisions with aliens
         for laser in self.spacehip.laser.iter_mut() {
             if laser.active {
                 let mut i = 0;
@@ -204,6 +205,7 @@ impl Game {
             }
         }
 
+        // Check collisions with obstacles
         for laser in self.spacehip.laser.iter_mut() {
             if laser.active {
                 for obstacle in self.obstacle.iter_mut() {
@@ -223,6 +225,7 @@ impl Game {
             }
         }
 
+        // Check collision with the mystery ship
         for laser in self.spacehip.laser.iter_mut() {
             if laser.active {
                 if self.mystery_ship.alive
@@ -238,6 +241,7 @@ impl Game {
             }
         }
 
+        // Check collisions with the spaceship
         for laser in self.alien_lasers.iter_mut() {
             if laser.active {
                 if self
@@ -263,6 +267,31 @@ impl Game {
                         }
                     }
                 }
+            }
+        }
+
+        //Alien collision with obstacle
+        for aliens in self.aliens.iter_mut() {
+            for obstacle in self.obstacle.iter_mut() {
+                let mut i = 0;
+                while i < obstacle.blocks.len() {
+                    if obstacle.blocks[i]
+                        .block_get_rec()
+                        .check_collision_recs(&aliens.alien_get_rec())
+                    {
+                        obstacle.blocks.remove(i);
+                    } else {
+                        i += 1;
+                    }
+                }
+            }
+
+            //Aliens collison with spacehip
+            if aliens
+                .alien_get_rec()
+                .check_collision_recs(&self.spacehip.spacehip_get_rect())
+            {
+                println!("Spachip hit by alien");
             }
         }
     }
