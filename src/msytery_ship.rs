@@ -4,7 +4,7 @@ pub struct MysteryShip {
     pub postion: Vector2,
     pub mystery_ship_sprite: Texture2D,
     pub speed: f32,
-    pub active: bool,
+    pub alive: bool,
 }
 
 impl MysteryShip {
@@ -13,12 +13,12 @@ impl MysteryShip {
             postion: Vector2::zero(),
             mystery_ship_sprite: rl.load_texture(&t, "res/mystery.png").unwrap(),
             speed: 0.0,
-            active: false,
+            alive: false,
         };
     }
 
     pub fn mystery_ship_get_rec(&self) -> Rectangle {
-        if self.active {
+        if self.alive {
             Rectangle::new(
                 self.postion.x,
                 self.postion.y,
@@ -42,23 +42,23 @@ impl MysteryShip {
             self.speed = -3.0;
         }
 
-        self.active = true;
+        self.alive = true;
     }
 
     pub fn mystery_ship_update(&mut self, rl: &RaylibHandle) {
-        if self.active {
+        if self.alive {
             self.postion.x += self.speed;
             if self.postion.x
                 > rl.get_screen_width() as f32 - self.mystery_ship_sprite.width() as f32
                 || self.postion.x < 0.0
             {
-                self.active = false;
+                self.alive = false;
             }
         }
     }
 
     pub fn ship_draw(&self, d: &mut RaylibDrawHandle) {
-        if self.active {
+        if self.alive {
             d.draw_texture(
                 &self.mystery_ship_sprite,
                 self.postion.x as i32,

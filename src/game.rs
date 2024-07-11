@@ -7,8 +7,6 @@ use crate::msytery_ship::MysteryShip;
 use crate::obstacle::Obstacle;
 use crate::spacehip::Spacehip;
 
-//TODO unload image?
-
 pub struct Game {
     pub spacehip: Spacehip,
     pub mystery_ship: MysteryShip,
@@ -223,13 +221,48 @@ impl Game {
                     }
                 }
             }
+        }
 
-            if self
-                .mystery_ship
-                .mystery_ship_get_rec()
-                .check_collision_recs(&laser.laser_get_rec())
-            {
-                self.mystery_ship.active = false;
+        for laser in self.spacehip.laser.iter_mut() {
+            if laser.active {
+                if self.mystery_ship.alive
+                    && self
+                        .mystery_ship
+                        .mystery_ship_get_rec()
+                        .check_collision_recs(&laser.laser_get_rec())
+                {
+                    self.mystery_ship.alive = false;
+                    laser.active = false;
+                    break;
+                }
+            }
+        }
+
+        for laser in self.alien_lasers.iter_mut() {
+            if laser.active {
+                if self
+                    .spacehip
+                    .spacehip_get_rect()
+                    .check_collision_recs(&laser.laser_get_rec())
+                {
+                    laser.active = false;
+                    println!("Spacehip HIT!!");
+                    break;
+                }
+                for obstacle in self.obstacle.iter_mut() {
+                    let mut i = 0;
+                    while i < obstacle.blocks.len() {
+                        if obstacle.blocks[i]
+                            .block_get_rec()
+                            .check_collision_recs(&laser.laser_get_rec())
+                        {
+                            obstacle.blocks.remove(i);
+                            laser.active = false;
+                        } else {
+                            i += 1;
+                        }
+                    }
+                }
             }
         }
     }
