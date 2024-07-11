@@ -5,7 +5,7 @@ use crate::alien::Alien;
 use crate::laser::Laser;
 use crate::msytery_ship::MysteryShip;
 use crate::obstacle::Obstacle;
-use crate::spacehip::{self, Spacehip};
+use crate::spacehip::Spacehip;
 
 pub struct Game {
     pub spacehip: Spacehip,
@@ -37,7 +37,7 @@ impl Game {
             time_alien_fired: 0.0,
             mystery_ship_interval: mystery_interval as f32,
             time_last_spawn_mystery_ship: 0.0,
-            player_lives: 10,
+            player_lives: 3,
         };
         let obstacle = Obstacle::new(Vector2::zero());
         game.create_obstacles(obstacle, rl);
@@ -67,7 +67,31 @@ impl Game {
         }
     }
 
-    pub fn game_input(&mut self, rl: &RaylibHandle) {
+    pub fn init_game(&mut self, rl: &mut RaylibHandle, t: &RaylibThread) {
+        let mystery_interval = rl.get_random_value::<i32>(10..20);
+
+        self.spacehip = Spacehip::new(rl, "src/spacehip.rs", t);
+        self.mystery_ship = MysteryShip::new(rl, t);
+        self.obstacle = Vec::new();
+        self.aliens = Vec::new();
+        self.run = true;
+        self.alien_direction = 1.0;
+        self.alien_lasers = Vec::new();
+        self.alien_laser_shot_interval = 0.35;
+        self.time_alien_fired = 0.0;
+        self.mystery_ship_interval = mystery_interval as f32;
+        self.time_last_spawn_mystery_ship = 0.0;
+        self.player_lives = 3;
+    }
+
+    pub fn reset_game(&mut self, rl: &RaylibHandle) {
+        self.spacehip.spaceship_reset(rl);
+        self.alien_lasers.clear();
+        self.aliens.clear();
+        self.obstacle.clear();
+    }
+
+    pub fn game_input(&mut self, rl: &mut RaylibHandle) {
         if self.run {
             if rl.is_key_down(KEY_LEFT) {
                 self.spacehip.move_left(rl);
@@ -79,28 +103,35 @@ impl Game {
         }
     }
 
-    pub fn game_update(&mut self, rl: &RaylibHandle) {
-        let curren_time = rl.get_time();
-        let get_time = rl.get_random_value::<i32>(10..20);
+    pub fn game_update(&mut self, rl: &mut RaylibHandle, t: &RaylibThread) {
+        if self.run {
+            let curren_time = rl.get_time();
+            let get_time = rl.get_random_value::<i32>(10..20);
 
-        if curren_time as f32 - self.time_last_spawn_mystery_ship > self.mystery_ship_interval {
-            self.time_last_spawn_mystery_ship = rl.get_time() as f32;
-            self.mystery_ship.spawn_mystery_ship(rl);
-            self.mystery_ship_interval = get_time as f32;
-        }
+            if curren_time as f32 - self.time_last_spawn_mystery_ship > self.mystery_ship_interval {
+                self.time_last_spawn_mystery_ship = rl.get_time() as f32;
+                self.mystery_ship.spawn_mystery_ship(rl);
+                self.mystery_ship_interval = get_time as f32;
+            }
 
-        for laser in self.spacehip.laser.iter_mut() {
-            laser.laser_update(rl);
-        }
-        self.move_alien(rl);
-        self.alien_shoot_laser(rl);
+            for laser in self.spacehip.laser.iter_mut() {
+                laser.laser_update(rl);
+            }
+            self.move_alien(rl);
+            self.alien_shoot_laser(rl);
 
-        for laser in self.alien_lasers.iter_mut() {
-            laser.laser_update(rl);
+            for laser in self.alien_lasers.iter_mut() {
+                laser.laser_update(rl);
+            }
+            self.mystery_ship.mystery_ship_update(rl);
+            self.check_collison();
+            self.delete_inactive_laser();
+        } else {
+            if rl.is_key_down(KEY_ENTER) {
+                self.reset_game(rl);
+                self.init_game(rl, t);
+            }
         }
-        self.mystery_ship.mystery_ship_update(rl);
-        self.check_collison();
-        self.delete_inactive_laser();
     }
 
     pub fn create_obstacles(&mut self, obstacle: Obstacle, rl: &RaylibHandle) -> Vec<Obstacle> {

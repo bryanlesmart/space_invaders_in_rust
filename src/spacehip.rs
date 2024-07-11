@@ -23,6 +23,12 @@ impl Spacehip {
         };
     }
 
+    pub fn spaceship_reset(&mut self, rl: &RaylibHandle) {
+        self.position.x = (rl.get_screen_width() - self.sprite.width()) as f32 / 2.0;
+        self.position.y = rl.get_screen_height() as f32 - self.sprite.height() as f32;
+        self.laser.clear();
+    }
+
     pub fn move_left(&mut self, rl: &RaylibHandle) {
         self.position.x -= 7.0;
         if self.position.x >= rl.get_screen_width() as f32 - self.sprite.width() as f32 {

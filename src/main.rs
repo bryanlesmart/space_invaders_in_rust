@@ -1,6 +1,5 @@
 use game::Game;
 use raylib::prelude::*;
-
 mod alien;
 mod block;
 mod game;
@@ -22,8 +21,8 @@ fn main() {
     rl.set_target_fps(60);
 
     while !rl.window_should_close() {
-        game.game_input(&rl);
-        game.game_update(&rl);
+        game.game_input(&mut rl);
+        game.game_update(&mut rl, &t);
         let mut d = rl.begin_drawing(&t);
         d.clear_background(gray);
         game.game_draw(&mut d);
