@@ -25,6 +25,13 @@ fn main() {
         game.game_update(&mut rl, &t);
         let mut d = rl.begin_drawing(&t);
         d.clear_background(gray);
+
+        if game.run {
+            d.draw_text("START [3]", 1, 1, 50, Color::WHEAT);
+        } else {
+            d.draw_text("END...", 100, 100, 50, Color::WHEAT);
+        }
+
         game.game_draw(&mut d);
     }
 }

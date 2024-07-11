@@ -70,10 +70,10 @@ impl Game {
     pub fn init_game(&mut self, rl: &mut RaylibHandle, t: &RaylibThread) {
         let mystery_interval = rl.get_random_value::<i32>(10..20);
 
-        self.spacehip = Spacehip::new(rl, "src/spacehip.rs", t);
-        self.mystery_ship = MysteryShip::new(rl, t);
-        self.obstacle = Vec::new();
-        self.aliens = Vec::new();
+        let obstacle = Obstacle::new(Vector2::zero());
+        self.spacehip = Spacehip::new(rl, "res/spaceship.png", t);
+        self.obstacle = self.create_obstacles(obstacle, rl);
+        self.create_aliens(rl, t);
         self.run = true;
         self.alien_direction = 1.0;
         self.alien_lasers = Vec::new();
@@ -158,6 +158,7 @@ impl Game {
                 };
                 let x = 75.0 + col as f32 * 55.0;
                 let y = 110.0 + row as f32 * 55.0;
+
                 self.aliens
                     .push(Alien::new(alien_type, Vector2::new(x, y), rl, t));
             }
