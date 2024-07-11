@@ -164,5 +164,6 @@ impl Game {
 
     pub fn delete_inactive_laser(&mut self) {
         self.spacehip.laser.retain(|laser| laser.active);
+        self.alien_lasers.retain(|laser| laser.active);
     }
 }
