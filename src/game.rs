@@ -5,7 +5,7 @@ use crate::alien::Alien;
 use crate::laser::Laser;
 use crate::msytery_ship::MysteryShip;
 use crate::obstacle::Obstacle;
-use crate::spacehip::Spacehip;
+use crate::spacehip::{self, Spacehip};
 
 pub struct Game {
     pub spacehip: Spacehip,
@@ -19,6 +19,7 @@ pub struct Game {
     pub time_alien_fired: f32,
     pub mystery_ship_interval: f32,
     pub time_last_spawn_mystery_ship: f32,
+    pub player_lives: i32,
 }
 
 impl Game {
@@ -36,6 +37,7 @@ impl Game {
             time_alien_fired: 0.0,
             mystery_ship_interval: mystery_interval as f32,
             time_last_spawn_mystery_ship: 0.0,
+            player_lives: 10,
         };
         let obstacle = Obstacle::new(Vector2::zero());
         game.create_obstacles(obstacle, rl);
@@ -241,7 +243,7 @@ impl Game {
             }
         }
 
-        // Check collisions with the spaceship
+        // Check alien laser  collisions with the spaceship
         for laser in self.alien_lasers.iter_mut() {
             if laser.active {
                 if self
@@ -250,7 +252,10 @@ impl Game {
                     .check_collision_recs(&laser.laser_get_rec())
                 {
                     laser.active = false;
-                    println!("Spacehip HIT!!");
+                    self.player_lives -= 1;
+                    if self.player_lives == 0 {
+                        self.game_over();
+                    }
                     break;
                 }
                 for obstacle in self.obstacle.iter_mut() {
@@ -285,14 +290,21 @@ impl Game {
                     }
                 }
             }
-
-            //Aliens collison with spacehip
-            if aliens
-                .alien_get_rec()
-                .check_collision_recs(&self.spacehip.spacehip_get_rect())
-            {
-                println!("Spachip hit by alien");
-            }
         }
+
+        //Aliens collison with spacehip
+        let spacehip_rect = self.spacehip.spacehip_get_rect();
+        if self
+            .aliens
+            .iter()
+            .any(|f| f.alien_get_rec().check_collision_recs(&spacehip_rect))
+        {
+            self.game_over();
+            return;
+        }
+    }
+
+    pub fn game_over(&mut self) {
+        self.run = false;
     }
 }
