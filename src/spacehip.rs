@@ -61,4 +61,13 @@ impl Spacehip {
             self.last_fire_time = rl.get_time() as f32;
         }
     }
+
+    pub fn spacehip_get_rect(&self) -> Rectangle {
+        return Rectangle::new(
+            self.position.x,
+            self.position.y,
+            self.sprite.width as f32,
+            self.sprite.height as f32,
+        );
+    }
 }

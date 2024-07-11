@@ -15,6 +15,15 @@ impl Laser {
         };
     }
 
+    pub fn laser_get_rec(&self) -> Rectangle {
+        let mut rec = Rectangle::default();
+        rec.x = self.position.x;
+        rec.y = self.position.y;
+        rec.width = 4.0;
+        rec.height = 15.0;
+        return rec;
+    }
+
     pub fn laser_update(&mut self, rl: &RaylibHandle) {
         if self.active {
             if self.position.y > rl.get_screen_height() as f32 || self.position.y < 0.0 {

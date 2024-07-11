@@ -99,6 +99,7 @@ impl Game {
             laser.laser_update(rl);
         }
         self.mystery_ship.mystery_ship_update(rl);
+        self.check_collison();
         self.delete_inactive_laser();
     }
 
@@ -184,5 +185,52 @@ impl Game {
     pub fn delete_inactive_laser(&mut self) {
         self.spacehip.laser.retain(|laser| laser.active);
         self.alien_lasers.retain(|laser| laser.active);
+    }
+
+    pub fn check_collison(&mut self) {
+        for laser in self.spacehip.laser.iter_mut() {
+            if laser.active {
+                let mut i = 0;
+                while i < self.aliens.len() {
+                    if self.aliens[i]
+                        .alien_get_rec()
+                        .check_collision_recs(&laser.laser_get_rec())
+                    {
+                        self.aliens.remove(i);
+                        laser.active = false;
+                        break;
+                    } else {
+                        i += 1;
+                    }
+                }
+            }
+        }
+
+        for laser in self.spacehip.laser.iter_mut() {
+            if laser.active {
+                for obstacle in self.obstacle.iter_mut() {
+                    let mut i = 0;
+                    while i < obstacle.blocks.len() {
+                        if obstacle.blocks[i]
+                            .block_get_rec()
+                            .check_collision_recs(&laser.laser_get_rec())
+                        {
+                            obstacle.blocks.remove(i);
+                            laser.active = false;
+                        } else {
+                            i += 1;
+                        }
+                    }
+                }
+            }
+
+            if self
+                .mystery_ship
+                .mystery_ship_get_rec()
+                .check_collision_recs(&laser.laser_get_rec())
+            {
+                self.mystery_ship.active = false;
+            }
+        }
     }
 }

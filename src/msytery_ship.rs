@@ -17,6 +17,19 @@ impl MysteryShip {
         };
     }
 
+    pub fn mystery_ship_get_rec(&self) -> Rectangle {
+        if self.active {
+            Rectangle::new(
+                self.postion.x,
+                self.postion.y,
+                self.mystery_ship_sprite.width as f32,
+                self.mystery_ship_sprite.height as f32,
+            )
+        } else {
+            Rectangle::default()
+        }
+    }
+
     pub fn spawn_mystery_ship(&mut self, rl: &RaylibHandle) {
         self.postion.y = 90.0;
         let side: i32 = rl.get_random_value(0..1);

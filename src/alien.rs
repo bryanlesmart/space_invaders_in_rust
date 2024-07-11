@@ -20,6 +20,15 @@ impl Alien {
         };
     }
 
+    pub fn alien_get_rec(&self) -> Rectangle {
+        return Rectangle::new(
+            self.position.x,
+            self.position.y,
+            self.alien_sprite.width as f32,
+            self.alien_sprite.height as f32,
+        );
+    }
+
     pub fn alien_draw(&self, d: &mut RaylibDrawHandle) {
         d.draw_texture_v(
             &self.alien_sprite,
