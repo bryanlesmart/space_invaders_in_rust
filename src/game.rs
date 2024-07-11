@@ -2,6 +2,7 @@ use raylib::consts::KeyboardKey::*;
 use raylib::prelude::*;
 
 use crate::alien::Alien;
+use crate::laser::Laser;
 use crate::obstacle::Obstacle;
 use crate::spacehip::Spacehip;
 
@@ -11,6 +12,9 @@ pub struct Game {
     pub aliens: Vec<Alien>,
     pub run: bool,
     pub alien_direction: f32,
+    pub alien_lasers: Vec<Laser>,
+    pub alien_laser_shot_interval: f32,
+    pub time_alien_fired: f32,
 }
 
 impl Game {
@@ -21,6 +25,9 @@ impl Game {
             aliens: Vec::new(),
             run: true,
             alien_direction: 1.0,
+            alien_lasers: Vec::new(),
+            alien_laser_shot_interval: 0.35,
+            time_alien_fired: 0.0,
         };
         let obstacle = Obstacle::new(Vector2::zero());
         game.create_obstacles(obstacle, rl);
@@ -43,6 +50,10 @@ impl Game {
             for aliens in self.aliens.iter_mut() {
                 aliens.alien_draw(d);
             }
+
+            for laser in self.alien_lasers.iter_mut() {
+                laser.laser_draw(d);
+            }
         }
     }
 
@@ -62,10 +73,14 @@ impl Game {
         for laser in self.spacehip.laser.iter_mut() {
             laser.laser_update(rl);
         }
-        self.delete_inactive_laser();
         self.move_alien(rl);
+        self.alien_shoot_laser(rl);
 
-        // println!("{:?}", self.spacehip.laser.len());
+        for laser in self.alien_lasers.iter_mut() {
+            laser.laser_update(rl);
+        }
+
+        self.delete_inactive_laser();
     }
 
     pub fn create_obstacles(&mut self, obstacle: Obstacle, rl: &RaylibHandle) -> Vec<Obstacle> {
@@ -124,6 +139,26 @@ impl Game {
     pub fn move_alien_down(&mut self, distance: f32) {
         for alien in self.aliens.iter_mut() {
             alien.position.y += distance;
+        }
+    }
+
+    pub fn alien_shoot_laser(&mut self, rl: &RaylibHandle) {
+        let curren_time = rl.get_time();
+        if curren_time as f32 - self.time_alien_fired >= self.alien_laser_shot_interval
+            && !self.aliens.is_empty()
+        {
+            let size = self.aliens.len() - 1;
+            let randon_index: i32 = rl.get_random_value(0..size as i32);
+            let alien = &self.aliens[randon_index as usize];
+
+            self.alien_lasers.push(Laser::new(
+                Vector2::new(
+                    alien.position.x + alien.alien_sprite.width() as f32 / 2.0,
+                    alien.position.y + alien.alien_sprite.height() as f32,
+                ),
+                6.0,
+            ));
+            self.time_alien_fired = rl.get_time() as f32;
         }
     }
 
