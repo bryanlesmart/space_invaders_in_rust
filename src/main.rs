@@ -5,6 +5,7 @@ mod alien;
 mod block;
 mod game;
 mod laser;
+mod msytery_ship;
 mod obstacle;
 mod spacehip;
 

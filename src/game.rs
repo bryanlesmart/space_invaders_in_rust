@@ -3,11 +3,15 @@ use raylib::prelude::*;
 
 use crate::alien::Alien;
 use crate::laser::Laser;
+use crate::msytery_ship::MysteryShip;
 use crate::obstacle::Obstacle;
 use crate::spacehip::Spacehip;
 
+//TODO unload image?
+
 pub struct Game {
     pub spacehip: Spacehip,
+    pub mystery_ship: MysteryShip,
     pub obstacle: Vec<Obstacle>,
     pub aliens: Vec<Alien>,
     pub run: bool,
@@ -15,12 +19,16 @@ pub struct Game {
     pub alien_lasers: Vec<Laser>,
     pub alien_laser_shot_interval: f32,
     pub time_alien_fired: f32,
+    pub mystery_ship_interval: f32,
+    pub time_last_spawn_mystery_ship: f32,
 }
 
 impl Game {
     pub fn new(rl: &mut RaylibHandle, filename: &'static str, t: &RaylibThread) -> Self {
+        let mystery_interval = rl.get_random_value::<i32>(10..20);
         let mut game = Game {
             spacehip: Spacehip::new(rl, filename, t),
+            mystery_ship: MysteryShip::new(rl, t),
             obstacle: Vec::new(),
             aliens: Vec::new(),
             run: true,
@@ -28,6 +36,8 @@ impl Game {
             alien_lasers: Vec::new(),
             alien_laser_shot_interval: 0.35,
             time_alien_fired: 0.0,
+            mystery_ship_interval: mystery_interval as f32,
+            time_last_spawn_mystery_ship: 0.0,
         };
         let obstacle = Obstacle::new(Vector2::zero());
         game.create_obstacles(obstacle, rl);
@@ -38,7 +48,7 @@ impl Game {
     pub fn game_draw(&mut self, d: &mut RaylibDrawHandle) {
         if self.run {
             self.spacehip.spaceship_draw(d);
-
+            self.mystery_ship.ship_draw(d);
             for laser in self.spacehip.laser.iter() {
                 laser.laser_draw(d);
             }
@@ -70,6 +80,15 @@ impl Game {
     }
 
     pub fn game_update(&mut self, rl: &RaylibHandle) {
+        let curren_time = rl.get_time();
+        let get_time = rl.get_random_value::<i32>(10..20);
+
+        if curren_time as f32 - self.time_last_spawn_mystery_ship > self.mystery_ship_interval {
+            self.time_last_spawn_mystery_ship = rl.get_time() as f32;
+            self.mystery_ship.spawn_mystery_ship(rl);
+            self.mystery_ship_interval = get_time as f32;
+        }
+
         for laser in self.spacehip.laser.iter_mut() {
             laser.laser_update(rl);
         }
@@ -79,7 +98,7 @@ impl Game {
         for laser in self.alien_lasers.iter_mut() {
             laser.laser_update(rl);
         }
-
+        self.mystery_ship.mystery_ship_update(rl);
         self.delete_inactive_laser();
     }
 
